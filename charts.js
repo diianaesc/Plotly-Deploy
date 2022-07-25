@@ -61,13 +61,21 @@ function buildCharts(sample) {
     var samples = data.samples;
     // 4. Create a variable that filters the samples for the object with the desired sample number.
     var samplesArray = samples.filter(sampleObj => sampleObj.id == sample);
+    // (D3) 1. Create a variable that filters the metadata array for the object with the desired sample number.
+    var metaArray = data.metadata.filter(sampleObj => sampleObj.id == sample);
     //  5. Create a variable that holds the first sample in the array.
-    var firstSample = samplesArray[0];
-
+    var firstSample = samplesArray[0]
+    // (D3) 2. Create a variable that holds the first sample in the metadata array.
+    var firstMeta = metaArray[0]
+    
     // 6. Create variables that hold the otu_ids, otu_labels, and sample_values.
     var otu_ids = firstSample.otu_ids;
-    var otu_labels = firstSample.otu.labels;
+    var otu_labels = firstSample.otu_labels;
     var sample_values = firstSample.sample_values;
+    
+     // (D3) 3. Create a variable that holds the washing frequency.
+     var wfreq = firstMeta.wfreq;
+
 
     // 7. Create the yticks for the bar chart.
     // Hint: Get the the top 10 otu_ids and map them in descending order  
@@ -97,5 +105,30 @@ function buildCharts(sample) {
     // 10. Use Plotly to plot the data with the layout. 
     Plotly.newPlot("bar", barData, barLayout);
 
+    // 1. Create the trace for the bubble chart.
+    var bubbleData = [{
+      x: otu_ids,
+      y: sample_values,
+      text: otu_labels,
+      mode: "markers",
+      marker: {
+        size: sample_values,
+        color: otu_ids,
+        colorscale: "Earth"
+      }
+    }];
+
+    // 2. Create the layout for the bubble chart.
+    var bubbleLayout = {
+      title: "Bacteria Species per Sample",
+      xaxis: {title: "OTU ID"},
+      hovermode: "closest",
+      showlegend: false
+    };
+
+    // 3. Use Plotly to plot the data with the layout.
+    Plotly.newPlot("bubble", bubbleData, bubbleLayout); 
+
+    
   });
 }
